@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎄 2026 聖誕交換禮物任務 🎁</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #1a2a3a;
+      --panel-bg: #fff8e7;
+      --border-dark: #2c1e16;
+      --xmas-red: #d9383a;
+      --xmas-green: #2e8b57;
+      --xmas-gold: #f4b41a;
+      --text-main: #2c1e16;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'DotGothic16', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px 15px 50px;
+      background-color: var(--bg-color);
+      background-image:
+        radial-gradient(#ffffff 1.5px, transparent 1.5px),
+        radial-gradient(#ffffff 1px, #1a2a3a 1px);
+      background-size: 40px 40px;
+      background-position: 0 0, 20px 20px;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .header-box {
+      background: var(--xmas-red);
+      color: #fff;
+      text-align: center;
+      padding: 16px 12px;
+      border: 4px solid var(--border-dark);
+      box-shadow: 0 6px 0 var(--border-dark);
+      margin-bottom: 24px;
+    }
+
+    .header-box h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 0 var(--border-dark);
+    }
+
+    .header-subtitle {
+      font-family: 'Press Start 2P', 'DotGothic16', monospace;
+      font-size: 0.7rem;
+      color: var(--xmas-gold);
+      margin-top: 8px;
+    }
+
+    .rpg-panel {
+      background: var(--panel-bg);
+      border: 4px solid var(--border-dark);
+      box-shadow: 0 6px 0 var(--border-dark);
+      padding: 18px;
+      margin-bottom: 22px;
+    }
+
+    .step-badge {
+      display: inline-block;
+      background: var(--xmas-green);
+      color: #fff;
+      padding: 4px 10px;
+      font-size: 0.9rem;
+      border: 2px solid var(--border-dark);
+      margin-bottom: 12px;
+    }
+
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .char-btn {
+      background: #fff;
+      border: 3px solid var(--border-dark);
+      padding: 10px 4px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.1s;
+      box-shadow: 0 3px 0 var(--border-dark);
+    }
+
+    .char-btn:active {
+      transform: translateY(3px);
+      box-shadow: none;
+    }
+
+    .char-btn.selected {
+      background: #ffe082;
+      border-color: var(--xmas-red);
+      box-shadow: 0 3px 0 var(--xmas-red);
+    }
+
+    .char-img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      margin-bottom: 6px;
+      background: #f0f4f8;
+      border: 2px dashed #ccc;
+      cursor: pointer;
+    }
+
+    .char-name {
+      font-size: 0.95rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .selected-char-bar {
+      margin-top: 12px;
+      background: #fff;
+      border: 2px solid var(--border-dark);
+      padding: 8px 10px;
+      font-size: 0.95rem;
+    }
+
+    .input-group {
+      margin-bottom: 14px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .input-group label span {
+      color: var(--xmas-red);
+    }
+
+    .pixel-input {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 1rem;
+      border: 3px solid var(--border-dark);
+      background: #fff;
+      outline: none;
+    }
+
+    .pixel-input:focus {
+      background: #fffde7;
+      border-color: var(--xmas-green);
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--xmas-gold);
+      color: var(--border-dark);
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 14px;
+      border: 4px solid var(--border-dark);
+      box-shadow: 0 5px 0 var(--border-dark);
+      cursor: pointer;
+      letter-spacing: 2px;
+    }
+
+    .submit-btn:hover {
+      background: #ffca28;
+    }
+
+    .submit-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 var(--border-dark);
+    }
+
+    .submit-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    #result-section {
+      display: none;
+      margin-top: 10px;
+      animation: popIn 0.4s ease-out;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    #wish-card {
+      background: linear-gradient(180deg, #fffdf7 0%, #f5ebd6 100%);
+      border: 4px solid var(--border-dark);
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 6px 0 var(--border-dark);
+    }
+
+    .card-header {
+      background: var(--xmas-green);
+      color: #fff;
+      padding: 6px;
+      font-size: 1rem;
+      border: 2px solid var(--border-dark);
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    .card-avatar-box {
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 10px;
+      background: #fff;
+      border: 3px solid var(--border-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .card-avatar-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    .card-char-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--xmas-red);
+      margin-bottom: 16px;
+    }
+
+    .card-slots {
+      background: #fff;
+      border: 3px solid var(--border-dark);
+      padding: 14px 12px;
+      text-align: left;
+      font-size: 1.05rem;
+      line-height: 1.9;
+    }
+
+    .slot-tag {
+      display: inline-block;
+      background: #ffecb3;
+      border: 2px solid var(--border-dark);
+      padding: 0 8px;
+      margin: 0 4px;
+      font-weight: bold;
+      color: var(--border-dark);
+    }
+
+    .slot-mystery {
+      display: inline-block;
+      background: var(--xmas-red);
+      color: #fff;
+      border: 2px solid var(--border-dark);
+      padding: 0 10px;
+      margin: 0 4px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    .card-footer-note {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .download-btn {
+      width: 100%;
+      margin-top: 14px;
+      background: var(--xmas-green);
+      color: #fff;
+      font-size: 1.05rem;
+      padding: 12px;
+      border: 3px solid var(--border-dark);
+      box-shadow: 0 4px 0 var(--border-dark);
+      cursor: pointer;
+    }
+
+    .status-msg {
+      text-align: center;
+      color: #fff;
+      background: rgba(0,0,0,0.6);
+      padding: 6px;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-box">
+    <h1>🎄 聖誕交換禮物任務 🎁</h1>
+    <div class="header-subtitle">SELECT YOUR CHARACTER</div>
+  </div>
+
+  <!-- 步驟 1：點選角色圖片 -->
+  <div class="rpg-panel">
+    <div class="step-badge">STEP 1. 點選你的角色圖片</div>
+    <div class="char-grid" id="charGrid"></div>
+    <div class="selected-char-bar">
+      已選擇角色：<strong id="selectedCharLabel">尚未選擇（請點選上方圖片，選自己就好喔）</strong>
+    </div>
+  </div>
+
+  <!-- 步驟 2：填寫兩個副詞與一個動詞 -->
+  <div class="rpg-panel">
+    <div class="step-badge">STEP 2. 輸入禮物咒語</div>
+
+    <div class="input-group">
+      <label>✨ 想收到的禮物【副詞 1】</label>
+      <input type="text" id="adv1" class="pixel-input" placeholder="例如：悄悄地、暖呼呼地、香噴噴地..." maxlength="15">
+    </div>
+
+    <div class="input-group">
+      <label>✨ 想收到的禮物【副詞 2】</label>
+      <input type="text" id="adv2" class="pixel-input" placeholder="例如：有如大師一般地、醉死人不償命地、爆汗地..." maxlength="15">
+    </div>
+
+    <div class="input-group">
+      <label>🎲 想送給別人的【動詞】<span>(這是給別人的唷)</span></label>
+      <input type="text" id="verb" class="pixel-input" placeholder="例如：抱著、咬一口、轉動、眨眼、動手..." maxlength="20">
+    </div>
+
+    <button id="submitBtn" class="submit-btn" onclick="submitForm()">▶ 確認後會送出至 Google 表單並生成圖卡(再次送出會以最新的為準喔)</button>
+  </div>
+
+  <!-- 步驟 3：顯示許願圖卡 -->
+  <div id="result-section">
+    <div id="wish-card">
+      <div class="card-header">★ 2026 聖誕許願任務卡 ★</div>
+      <div class="card-avatar-box">
+        <img id="cardImg" src="" alt="角色頭像">
+      </div>
+      <div class="card-char-title" id="cardName">角色名稱</div>
+
+      <div class="card-slots">
+        <div>🎁 禮物許願內容：</div>
+        <div>👉 <span class="slot-tag" id="cardAdv1">副詞1</span></div>
+        <div>👉 <span class="slot-tag" id="cardAdv2">副詞2</span></div>
+        <div>👉 動詞：<span class="slot-mystery">？？？</span></div>
+      </div>
+      <div class="card-footer-note">※ 神秘動詞將於交換禮物當天揭曉 ※</div>
+    </div>
+
+    <button class="download-btn" onclick="downloadCard()">💾 儲存這張許願卡 (PNG)</button>
+    <div class="status-msg" id="statusMsg">✅ 資料已成功傳送至 Google 表單！</div>
+  </div>
+</div>
+
+<script>
+  const createPixelPlaceholder = (emoji, bgColor) => {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+      <rect width="64" height="64" fill="${bgColor}"/>
+      <rect x="4" y="4" width="56" height="56" fill="none" stroke="#2c1e16" stroke-width="4" stroke-dasharray="4 4"/>
+      <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-size="32">${emoji}</text>
+    </svg>`;
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  };
+
+  // 六名角色：Alice, Kenzi, Diane, Mara, 涵涵, 邦邦
+const characters = [
+  { id: '1', name: 'Alice', img: 'alice.png' },
+  { id: '2', name: 'Kenzi', img: 'kenzi.png' },
+  { id: '3', name: 'Diane', img: 'diane.png' },
+  { id: '4', name: 'Mara',  img: 'mara.png' },
+  { id: '5', name: '涵涵',  img: 'hanhan.png' },
+  { id: '6', name: '邦邦',  img: 'bang.png' }
+];
+
+  let selectedChar = null;
+
+  const charGrid = document.getElementById('charGrid');
+  characters.forEach((char, index) => {
+    const btn = document.createElement('div');
+    btn.className = 'char-btn';
+    btn.onclick = () => selectCharacter(index, btn);
+    btn.innerHTML = `
+      <img src="${char.img}" alt="${char.name}" class="char-img">
+      <div class="char-name">${char.name}</div>
+    `;
+    charGrid.appendChild(btn);
+  });
+
+  function selectCharacter(index, btnElement) {
+    selectedChar = characters[index];
+    document.querySelectorAll('.char-btn').forEach(b => b.classList.remove('selected'));
+    btnElement.classList.add('selected');
+    document.getElementById('selectedCharLabel').innerText = selectedChar.name;
+  }
+
+  function submitForm() {
+    const adv1 = document.getElementById('adv1').value.trim();
+    const adv2 = document.getElementById('adv2').value.trim();
+    const verb = document.getElementById('verb').value.trim();
+
+    if (!selectedChar) {
+      alert('⚠️ 請先在 STEP 1 點選你的角色圖片喔！');
+      return;
+    }
+    if (!adv1 || !adv2 || !verb) {
+      alert('⚠️ 請把兩個「副詞」和一個「動詞」都填滿喔！');
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = '傳送至 Google 表單中...';
+
+    const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSexMTcdGXXzZbXo6Si6nx0CYFuv4Uml6i-z3twar74LUrKk1g/formResponse';
+    const formData = new FormData();
+    formData.append('entry.2105886130', selectedChar.name); // 角色名稱 (Alice / Kenzi / Diane / Mara / 涵涵 / 邦邦)
+    formData.append('entry.1166689023', adv1);              // 副詞 1
+    formData.append('entry.728881215', adv2);               // 副詞 2
+    formData.append('entry.803138642', verb);               // 動詞
+
+    fetch(formUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData
+    }).then(() => {
+      showResultCard(selectedChar, adv1, adv2);
+      submitBtn.innerText = '✔ 已完成許願並送出！';
+    }).catch((err) => {
+      console.error(err);
+      showResultCard(selectedChar, adv1, adv2);
+      submitBtn.innerText = '✔ 已完成許願並送出！';
+    });
+  }
+
+  function showResultCard(char, adv1, adv2) {
+    document.getElementById('cardImg').src = char.img;
+    document.getElementById('cardName').innerText = char.name;
+    document.getElementById('cardAdv1').innerText = adv1;
+    document.getElementById('cardAdv2').innerText = adv2;
+
+    const resultSection = document.getElementById('result-section');
+    resultSection.style.display = 'block';
+    resultSection.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function downloadCard() {
+    const cardElement = document.getElementById('wish-card');
+    html2canvas(cardElement, {
+      scale: 2,
+      backgroundColor: null
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = `${selectedChar.name}_聖誕許願卡.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  }
+</script>
+
+</body>
+</html>
