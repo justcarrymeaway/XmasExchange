@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔐 2026 聖誕交換禮物：任務揭曉 🎁</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #1a2a3a;
+      --panel-bg: #fff8e7;
+      --border-dark: #2c1e16;
+      --xmas-red: #d9383a;
+      --xmas-green: #2e8b57;
+      --xmas-gold: #f4b41a;
+      --witch-purple: #6a359c;
+      --text-main: #2c1e16;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'DotGothic16', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px 15px 60px;
+      background-color: var(--bg-color);
+      background-image:
+        radial-gradient(#ffffff 1.5px, transparent 1.5px),
+        radial-gradient(#ffffff 1px, #1a2a3a 1px);
+      background-size: 40px 40px;
+      background-position: 0 0, 20px 20px;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 540px;
+    }
+
+    .header-box {
+      background: var(--xmas-red);
+      color: #fff;
+      text-align: center;
+      padding: 16px 12px;
+      border: 4px solid var(--border-dark);
+      box-shadow: 0 6px 0 var(--border-dark);
+      margin-bottom: 22px;
+    }
+
+    .header-box h1 {
+      margin: 0;
+      font-size: 1.45rem;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 0 var(--border-dark);
+    }
+
+    .header-subtitle {
+      font-family: 'Press Start 2P', 'DotGothic16', monospace;
+      font-size: 0.65rem;
+      color: var(--xmas-gold);
+      margin-top: 8px;
+    }
+
+    .rpg-panel {
+      background: var(--panel-bg);
+      border: 4px solid var(--border-dark);
+      box-shadow: 0 6px 0 var(--border-dark);
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    #hostSyncPanel {
+      display: none;
+    }
+
+    .panel-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .step-badge {
+      display: inline-block;
+      background: var(--xmas-green);
+      color: #fff;
+      padding: 4px 10px;
+      font-size: 0.92rem;
+      border: 2px solid var(--border-dark);
+    }
+
+    .small-btn {
+      background: #eceff1;
+      border: 2px solid var(--border-dark);
+      padding: 4px 10px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .sync-status {
+      background: #fff;
+      border: 2px solid var(--border-dark);
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .roster-preview {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+
+    .roster-chip {
+      background: #fff;
+      border: 2px solid var(--border-dark);
+      padding: 5px 8px;
+    }
+
+    .pin-tag {
+      background: #fffde7;
+      border: 1.5px solid var(--border-dark);
+      padding: 0 5px;
+      font-weight: bold;
+      color: var(--witch-purple);
+    }
+
+    .status-ok {
+      color: var(--xmas-green);
+      font-weight: bold;
+    }
+
+    .status-warn {
+      color: var(--xmas-red);
+      font-weight: bold;
+    }
+
+    /* 主辦人自動配對對照表 */
+    .host-matrix-wrap {
+      margin-top: 14px;
+      background: #fff;
+      border: 3px solid var(--border-dark);
+      padding: 10px;
+      overflow-x: auto;
+    }
+
+    .host-matrix-title {
+      font-weight: bold;
+      font-size: 0.95rem;
+      color: var(--witch-purple);
+      margin-bottom: 8px;
+    }
+
+    .host-matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      min-width: 440px;
+    }
+
+    .host-matrix-table th,
+    .host-matrix-table td {
+      border: 2px solid var(--border-dark);
+      padding: 6px 8px;
+      text-align: left;
+    }
+
+    .host-matrix-table th {
+      background: #ffecb3;
+      color: var(--border-dark);
+      font-weight: bold;
+    }
+
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .char-btn {
+      background: #fff;
+      border: 3px solid var(--border-dark);
+      padding: 10px 4px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 3px 0 var(--border-dark);
+      transition: transform 0.1s;
+    }
+
+    .char-btn:active {
+      transform: translateY(3px);
+      box-shadow: none;
+    }
+
+    .char-btn.selected {
+      background: #ffe082;
+      border-color: var(--xmas-red);
+      box-shadow: 0 3px 0 var(--xmas-red);
+    }
+
+    .char-img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      margin-bottom: 6px;
+      background: #f0f4f8;
+      border: 2px dashed #ccc;
+    }
+
+    .char-name {
+      font-size: 0.95rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .pin-box {
+      margin-bottom: 14px;
+    }
+
+    .pin-box label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .pin-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.3rem;
+      text-align: center;
+      letter-spacing: 10px;
+      border: 3px solid var(--border-dark);
+      background: #fff;
+      outline: none;
+    }
+
+    .pin-input:focus {
+      background: #fffde7;
+      border-color: var(--xmas-green);
+    }
+
+    .unlock-btn {
+      width: 100%;
+      background: var(--xmas-gold);
+      color: var(--border-dark);
+      font-size: 1.15rem;
+      font-weight: bold;
+      padding: 13px;
+      border: 4px solid var(--border-dark);
+      box-shadow: 0 5px 0 var(--border-dark);
+      cursor: pointer;
+      letter-spacing: 2px;
+    }
+
+    .unlock-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 var(--border-dark);
+    }
+
+    #reveal-card-section {
+      display: none;
+      animation: popIn 0.35s ease-out;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.92); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    #mission-card {
+      background: linear-gradient(180deg, #fffdf7 0%, #f5ebd6 100%);
+      border: 4px solid var(--border-dark);
+      box-shadow: 0 6px 0 var(--border-dark);
+      padding: 18px 14px;
+      text-align: center;
+    }
+
+    .card-top-banner {
+      background: var(--xmas-red);
+      color: #fff;
+      padding: 6px;
+      border: 2px solid var(--border-dark);
+      font-size: 1rem;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    .match-stage {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #fff;
+      border: 3px solid var(--border-dark);
+      padding: 12px 10px;
+      margin-bottom: 14px;
+    }
+
+    .player-card-mini {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .avatar-frame {
+      width: 78px;
+      height: 78px;
+      background: #fffdf7;
+      border: 3px solid var(--border-dark);
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+
+    .avatar-frame.target-highlight {
+      border-color: var(--xmas-red);
+      background: #fff5f5;
+      box-shadow: 0 0 0 2px var(--xmas-gold);
+    }
+
+    .avatar-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    .player-role-tag {
+      font-size: 0.75rem;
+      padding: 1px 6px;
+      border: 1.5px solid var(--border-dark);
+      margin-bottom: 3px;
+    }
+
+    .tag-giver {
+      background: #e0f2f1;
+      color: #004d40;
+    }
+
+    .tag-receiver {
+      background: #ffecb3;
+      color: #8d6e63;
+    }
+
+    .player-mini-name {
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    .award-arrow-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 2px;
+      animation: floatAward 1.4s ease-in-out infinite;
+    }
+
+    @keyframes floatAward {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .award-badge {
+      background: var(--xmas-gold);
+      color: var(--border-dark);
+      border: 2px solid var(--border-dark);
+      padding: 2px 7px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      box-shadow: 0 2px 0 var(--border-dark);
+      white-space: nowrap;
+      margin-bottom: 4px;
+    }
+
+    .custom-arrow-img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    .quest-box {
+      background: #fff;
+      border: 3px solid var(--border-dark);
+      padding: 14px 12px;
+      text-align: left;
+      font-size: 1rem;
+      line-height: 1.85;
+    }
+
+    .quest-section-title {
+      font-weight: bold;
+      font-size: 1.05rem;
+      color: var(--xmas-green);
+      margin-bottom: 4px;
+    }
+
+    .quest-item {
+      margin-left: 6px;
+      margin-bottom: 4px;
+    }
+
+    .pill-adv {
+      display: inline-block;
+      background: #ffecb3;
+      border: 2px solid var(--border-dark);
+      padding: 0 8px;
+      font-weight: bold;
+      color: var(--border-dark);
+    }
+
+    .witch-bonus-box {
+      margin-top: 10px;
+      padding: 8px 10px;
+      background: #f3e5f5;
+      border: 2px dashed var(--witch-purple);
+    }
+
+    .witch-title {
+      font-weight: bold;
+      color: var(--witch-purple);
+      margin-bottom: 4px;
+    }
+
+    .pill-verb {
+      display: inline-block;
+      background: #ffcdd2;
+      color: #b71c1c;
+      border: 2px solid var(--border-dark);
+      padding: 0 8px;
+      font-weight: bold;
+    }
+
+    .magic-prompt {
+      margin-top: 12px;
+      padding: 10px;
+      background: #fffde7;
+      border: 2px solid var(--border-dark);
+      font-weight: bold;
+      font-size: 1.02rem;
+      color: var(--xmas-red);
+      text-align: center;
+    }
+
+    .price-note-box {
+      margin-top: 10px;
+      padding: 8px 10px;
+      background: #eef7f2;
+      border: 2px solid var(--xmas-green);
+      font-size: 0.88rem;
+      color: #1b5e20;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .save-btn {
+      width: 100%;
+      margin-top: 12px;
+      background: var(--xmas-green);
+      color: #fff;
+      border: 3px solid var(--border-dark);
+      box-shadow: 0 4px 0 var(--border-dark);
+      padding: 11px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-box">
+    <h1>🔐 聖誕交換禮物：密碼揭曉 🎁</h1>
+    <div class="header-subtitle">MAGIC GIFT MISSION REVEAL</div>
+  </div>
+
+  <!-- 主辦人專用：僅在網址帶 ?host=2026 時顯示 -->
+  <div class="rpg-panel" id="hostSyncPanel">
+    <div class="panel-top">
+      <div class="step-badge">HOST ONLY. 表單狀態、密碼與配對表</div>
+      <div>
+        <button class="small-btn" onclick="fetchSheetData()">🔄 重新同步</button>
+        <button class="small-btn" onclick="rerollAllPins()">🎲 重抽 6 組密碼</button>
+      </div>
+    </div>
+
+    <div class="sync-status" id="syncStatus">⏳ 正在連線你的 Google 表單回覆...</div>
+    <div class="roster-preview" id="rosterPreview"></div>
+
+    <!-- 自動算好的 6 人密碼、送禮對象與動詞來源對照表 -->
+    <div class="host-matrix-wrap">
+      <div class="host-matrix-title">📋 6 人配對與動詞來源總表（僅主辦人可見）</div>
+      <table class="host-matrix-table">
+        <thead>
+          <tr>
+            <th>角色 (A)</th>
+            <th>3位數密碼</th>
+            <th>送禮對象 (B)</th>
+            <th>魔女動詞來源</th>
+            <th>抽到動詞</th>
+          </tr>
+        </thead>
+        <tbody id="hostMatrixBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 玩家揭曉區 -->
+  <div class="rpg-panel">
+    <div class="step-badge">STEP 1. 點選「我是誰」並輸入 3 位數密碼</div>
+
+    <div class="char-grid" id="charSelectGrid"></div>
+
+    <div class="pin-box">
+      <label for="pinInput">🔑 輸入你的 3 位數確認密碼</label>
+      <input type="password" id="pinInput" class="pin-input" maxlength="3" inputmode="numeric" pattern="[0-9]*" placeholder="•••">
+    </div>
+
+    <button class="unlock-btn" onclick="unlockMission()">▶ 確認密碼並揭曉魔法禮物任務</button>
+  </div>
+
+  <!-- 揭曉結果任務卡 -->
+  <div id="reveal-card-section">
+    <div id="mission-card">
+      <div class="card-top-banner">✨ 2026 聖誕禮物任務卡 ✨</div>
+
+      <div class="match-stage">
+        <div class="player-card-mini">
+          <span class="player-role-tag tag-giver">送禮魔法師</span>
+          <div class="avatar-frame">
+            <img id="giverImg" src="" alt="送禮者頭像">
+          </div>
+          <div class="player-mini-name" id="giverNameDisplay">A</div>
+        </div>
+
+        <div class="award-arrow-box">
+          <div class="award-badge">🏆 送給 ✨</div>
+          <img src="arrow.png" alt="送禮箭頭" class="custom-arrow-img">
+        </div>
+
+        <div class="player-card-mini">
+          <span class="player-role-tag tag-receiver">幸運收禮人</span>
+          <div class="avatar-frame target-highlight">
+            <img id="targetImg" src="" alt="收禮者頭像">
+          </div>
+          <div class="player-mini-name" id="targetName">B</div>
+        </div>
+      </div>
+
+      <div class="quest-box">
+        <div class="quest-section-title">🌟 <span id="targetNameTitle">B</span> 的許願是：</div>
+        <div class="quest-item">1. <span class="pill-adv" id="targetAdv1">副詞1</span></div>
+        <div class="quest-item">2. <span class="pill-adv" id="targetAdv2">副詞2</span></div>
+
+        <div class="witch-bonus-box">
+          <div class="witch-title">🧙‍♀️ 魔女加碼：</div>
+          <div class="quest-item">3. <span class="pill-verb" id="assignedVerb">別人的動詞</span></div>
+        </div>
+
+        <div class="magic-prompt">
+          🪄 請 <span id="giverPromptName">A</span> 想想最適合給 <span id="targetPromptName">B</span> 的魔法禮物會是什麼呢？
+        </div>
+
+        <div class="price-note-box">
+          📝 <strong>備註：</strong>這次沒有設定價格，請以大家可以負擔且好玩的情形準備就好了唷！
+        </div>
+      </div>
+    </div>
+
+    <button class="save-btn" onclick="downloadMissionCard()">💾 儲存我的禮物任務卡 (PNG)</button>
+  </div>
+</div>
+
+<script>
+  const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSRmv8JXktPuYBE_cJgKwPOOpJaQQPLg8xc7Kn4gwSwIdmRI86bGGsibg5ZRbBTQ7woj0-UQ_ZzIs29/pub?gid=1288717760&single=true&output=csv';
+
+  const HOST_SECRET_KEY = '2026';
+  const urlParams = new URLSearchParams(window.location.search);
+  const isHostView = urlParams.get('host') === HOST_SECRET_KEY;
+  if (isHostView) {
+    document.getElementById('hostSyncPanel').style.display = 'block';
+  }
+
+  function generateNonConsecutivePins(count) {
+    const pins = [];
+    const used = new Set();
+    while (pins.length < count) {
+      const n = Math.floor(Math.random() * 900) + 100;
+      const s = String(n);
+      const d0 = Number(s[0]);
+      const d1 = Number(s[1]);
+      const d2 = Number(s[2]);
+      const noConsecutive =
+        Math.abs(d1 - d0) !== 1 &&
+        Math.abs(d2 - d1) !== 1 &&
+        d0 !== d1 &&
+        d1 !== d2;
+      if (noConsecutive && !used.has(s)) {
+        used.add(s);
+        pins.push(s);
+      }
+    }
+    return pins;
+  }
+
+  const PIN_STORAGE_KEY = 'xmas_2026_random_pins_v1';
+  let savedPins = JSON.parse(localStorage.getItem(PIN_STORAGE_KEY) || 'null');
+  if (!Array.isArray(savedPins) || savedPins.length !== 6) {
+    savedPins = generateNonConsecutivePins(6);
+    localStorage.setItem(PIN_STORAGE_KEY, JSON.stringify(savedPins));
+  }
+
+  const roster = [
+    { id: '1', name: 'Alice', pin: savedPins[0], img: 'alice.png',  adv1: '', adv2: '', verb: '' },
+    { id: '2', name: 'Kenzi', pin: savedPins[1], img: 'kenzi.png',  adv1: '', adv2: '', verb: '' },
+    { id: '3', name: 'Diane', pin: savedPins[2], img: 'diane.png',  adv1: '', adv2: '', verb: '' },
+    { id: '4', name: 'Mara',  pin: savedPins[3], img: 'mara.png',   adv1: '', adv2: '', verb: '' },
+    { id: '5', name: '涵涵',  pin: savedPins[4], img: 'hanhan.png', adv1: '', adv2: '', verb: '' },
+    { id: '6', name: '邦邦',  pin: savedPins[5], img: 'bang.png',   adv1: '', adv2: '', verb: '' }
+  ];
+
+  function rerollAllPins() {
+    const freshPins = generateNonConsecutivePins(6);
+    localStorage.setItem(PIN_STORAGE_KEY, JSON.stringify(freshPins));
+    roster.forEach((p, idx) => {
+      p.pin = freshPins[idx];
+    });
+    document.getElementById('reveal-card-section').style.display = 'none';
+    renderRosterPreview();
+    renderHostMatrix();
+  }
+
+  let selectedGiverIdx = null;
+
+  const charSelectGrid = document.getElementById('charSelectGrid');
+  roster.forEach((p, idx) => {
+    const btn = document.createElement('div');
+    btn.className = 'char-btn';
+    btn.onclick = () => {
+      selectedGiverIdx = idx;
+      document.querySelectorAll('.char-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('reveal-card-section').style.display = 'none';
+    };
+    btn.innerHTML = `
+      <img src="${p.img}" alt="${p.name}" class="char-img">
+      <div class="char-name">${p.name}</div>
+    `;
+    charSelectGrid.appendChild(btn);
+  });
+
+  function parseCSV(text) {
+    const rows = [];
+    let currentRow = [];
+    let currentVal = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      const nextCh = text[i + 1];
+
+      if (ch === '"' && inQuotes && nextCh === '"') {
+        currentVal += '"';
+        i++;
+      } else if (ch === '"') {
+        inQuotes = !inQuotes;
+      } else if (ch === ',' && !inQuotes) {
+        currentRow.push(currentVal.trim());
+        currentVal = '';
+      } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+        if (ch === '\r' && nextCh === '\n') i++;
+        currentRow.push(currentVal.trim());
+        if (currentRow.some(cell => cell !== '')) {
+          rows.push(currentRow);
+        }
+        currentRow = [];
+        currentVal = '';
+      } else {
+        currentVal += ch;
+      }
+    }
+    if (currentVal.length > 0 || currentRow.length > 0) {
+      currentRow.push(currentVal.trim());
+      if (currentRow.some(cell => cell !== '')) {
+        rows.push(currentRow);
+      }
+    }
+    return rows;
+  }
+
+  function renderRosterPreview() {
+    const preview = document.getElementById('rosterPreview');
+    preview.innerHTML = roster.map(p => {
+      const ready = Boolean(p.adv1 && p.adv2 && p.verb);
+      return `
+        <div class="roster-chip">
+          <strong>${p.name}</strong> <span class="pin-tag">碼:${p.pin}</span>：
+          <span class="${ready ? 'status-ok' : 'status-warn'}">${ready ? '已填 ✓' : '待填'}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function seededRandom(seedStr) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < seedStr.length; i++) {
+      h ^= seedStr.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return function () {
+      h += 0x6D2B79F5;
+      let t = Math.imul(h ^ (h >>> 15), 1 | h);
+      t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function buildGlobalOneToOneMap(entries) {
+    const n = entries.length;
+    const globalSeed = entries.map(e => `${e.name}:${e.pin}`).join('|') + '|2026-xmas-1to1';
+    const rng = seededRandom(globalSeed);
+
+    const receiversOrder = entries
+      .map((item, idx) => ({ idx, weight: rng() }))
+      .sort((a, b) => a.weight - b.weight)
+      .map(x => x.idx);
+
+    const assignedReceiverForGiver = new Array(n).fill(-1);
+    const usedReceivers = new Set();
+
+    function backtrack(giverIdx) {
+      if (giverIdx === n) return true;
+      for (const rIdx of receiversOrder) {
+        if (rIdx === giverIdx || usedReceivers.has(rIdx)) continue;
+        assignedReceiverForGiver[giverIdx] = rIdx;
+        usedReceivers.add(rIdx);
+        if (backtrack(giverIdx + 1)) return true;
+        usedReceivers.delete(rIdx);
+        assignedReceiverForGiver[giverIdx] = -1;
+      }
+      return false;
+    }
+
+    backtrack(0);
+    return assignedReceiverForGiver;
+  }
+
+  function buildGlobalVerbMap(entries, targetMap) {
+    const n = entries.length;
+    const globalSeed = entries.map(e => `${e.name}:${e.pin}:${e.verb}`).join('|') + '|2026-xmas-verb-v4';
+    const rng = seededRandom(globalSeed);
+
+    const verbSourcesOrder = entries
+      .map((item, idx) => ({ idx, weight: rng() }))
+      .sort((a, b) => a.weight - b.weight)
+      .map(x => x.idx);
+
+    const assignedVerbSourceForGiver = new Array(n).fill(-1);
+    const usedSources = new Set();
+
+    function backtrack(giverIdx, strictTextCheck) {
+      if (giverIdx === n) return true;
+      const targetIdx = targetMap[giverIdx];
+      const giverVerb = entries[giverIdx].verb;
+      const targetVerb = entries[targetIdx].verb;
+
+      for (const srcIdx of verbSourcesOrder) {
+        if (usedSources.has(srcIdx)) continue;
+        if (srcIdx === giverIdx || srcIdx === targetIdx) continue;
+
+        const candidateVerb = entries[srcIdx].verb;
+        if (strictTextCheck && candidateVerb) {
+          if (candidateVerb === giverVerb || candidateVerb === targetVerb) continue;
+        }
+
+        assignedVerbSourceForGiver[giverIdx] = srcIdx;
+        usedSources.add(srcIdx);
+        if (backtrack(giverIdx + 1, strictTextCheck)) return true;
+        usedSources.delete(srcIdx);
+        assignedVerbSourceForGiver[giverIdx] = -1;
+      }
+      return false;
+    }
+
+    if (!backtrack(0, true)) {
+      usedSources.clear();
+      assignedVerbSourceForGiver.fill(-1);
+      backtrack(0, false);
+    }
+
+    return assignedVerbSourceForGiver;
+  }
+
+  function renderHostMatrix() {
+    const tbody = document.getElementById('hostMatrixBody');
+    if (!tbody) return;
+
+    const targetMap = buildGlobalOneToOneMap(roster);
+    const verbSourceMap = buildGlobalVerbMap(roster, targetMap);
+
+    tbody.innerHTML = roster.map((giver, idx) => {
+      const target = roster[targetMap[idx]];
+      const verbSource = roster[verbSourceMap[idx]];
+      const verbText = verbSource.verb ? verbSource.verb : '（待填寫）';
+      return `
+        <tr>
+          <td><strong>${giver.name}</strong></td>
+          <td><span class="pin-tag">${giver.pin}</span></td>
+          <td><strong>${target.name}</strong></td>
+          <td>${verbSource.name}</td>
+          <td>${verbText}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  async function fetchSheetData() {
+    const statusEl = document.getElementById('syncStatus');
+    statusEl.innerHTML = '⏳ 正在連線你的 Google 表單回覆...';
+
+    try {
+      const sep = GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?';
+      const res = await fetch(`${GOOGLE_SHEET_CSV_URL}${sep}_t=${Date.now()}`);
+      if (!res.ok) throw new Error('網路回應異常');
+
+      const csvText = await res.text();
+      const rows = parseCSV(csvText);
+
+      for (let r = 1; r < rows.length; r++) {
+        const cols = rows[r];
+        const charName = cols[1] || cols[0] || '';
+        const adv1 = cols[1] === charName ? (cols[2] || '') : (cols[1] || '');
+        const adv2 = cols[1] === charName ? (cols[3] || '') : (cols[2] || '');
+        const verb = cols[1] === charName ? (cols[4] || '') : (cols[3] || '');
+
+        const matchedIdx = roster.findIndex(p =>
+          charName.trim().toLowerCase() === p.name.toLowerCase() ||
+          charName.includes(p.name)
+        );
+
+        if (matchedIdx !== -1) {
+          roster[matchedIdx].adv1 = adv1;
+          roster[matchedIdx].adv2 = adv2;
+          roster[matchedIdx].verb = verb;
+        }
+      }
+
+      const readyCount = roster.filter(p => p.adv1 && p.adv2 && p.verb).length;
+      statusEl.innerHTML = `<span class="status-ok">✅ 已同步 Google 表單回覆</span>（目前已就緒：${readyCount} / ${roster.length} 位）`;
+      renderRosterPreview();
+      renderHostMatrix();
+    } catch (err) {
+      console.error(err);
+      statusEl.innerHTML = '<span class="status-warn">❌ 讀取表單回覆失敗</span>（請確認網路連線或稍後再按重新同步）';
+      renderRosterPreview();
+      renderHostMatrix();
+    }
+  }
+
+  function getDeterministicAssignment(giverIdx, pin, entries) {
+    const globalMap = buildGlobalOneToOneMap(entries);
+    const targetIdx = globalMap[giverIdx];
+
+    const verbSourceMap = buildGlobalVerbMap(entries, globalMap);
+    const verbSrcIdx = verbSourceMap[giverIdx];
+    const chosenVerb = entries[verbSrcIdx].verb;
+
+    const storageKey = `xmas_2026_1to1_witch_v4_${entries[giverIdx].name}_${pin}`;
+    localStorage.setItem(storageKey, JSON.stringify({ targetIdx, chosenVerb }));
+
+    return {
+      target: entries[targetIdx],
+      chosenVerb
+    };
+  }
+
+  function unlockMission() {
+    if (selectedGiverIdx === null) {
+      alert('⚠️ 請先點選角色圖片選擇「我是誰」喔！');
+      return;
+    }
+
+    const pinInput = document.getElementById('pinInput').value.trim();
+    const giver = roster[selectedGiverIdx];
+
+    if (!/^\d{3}$/.test(pinInput) || pinInput !== giver.pin) {
+      alert('❌ 3 位數確認密碼不正確，請再確認一次喔！');
+      return;
+    }
+
+    const entries = roster.map(p => ({
+      ...p,
+      adv1: p.adv1 || '（尚未填寫副詞1）',
+      adv2: p.adv2 || '（尚未填寫副詞2）',
+      verb: p.verb || '（尚未填寫動詞）'
+    }));
+
+    const { target, chosenVerb } = getDeterministicAssignment(selectedGiverIdx, pinInput, entries);
+
+    document.getElementById('giverImg').src = giver.img;
+    document.getElementById('giverNameDisplay').innerText = giver.name;
+    document.getElementById('targetImg').src = target.img;
+    document.getElementById('targetName').innerText = target.name;
+
+    document.getElementById('targetNameTitle').innerText = target.name;
+    document.getElementById('targetAdv1').innerText = target.adv1;
+    document.getElementById('targetAdv2').innerText = target.adv2;
+    document.getElementById('assignedVerb').innerText = chosenVerb;
+    document.getElementById('giverPromptName').innerText = giver.name;
+    document.getElementById('targetPromptName').innerText = target.name;
+
+    const section = document.getElementById('reveal-card-section');
+    section.style.display = 'block';
+    section.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function downloadMissionCard() {
+    const cardEl = document.getElementById('mission-card');
+    const giver = roster[selectedGiverIdx];
+    html2canvas(cardEl, {
+      scale: 2,
+      backgroundColor: null
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = `${giver.name}_聖誕魔法禮物任務卡.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  }
+
+  renderRosterPreview();
+  renderHostMatrix();
+  fetchSheetData();
+</script>
+
+</body>
+</html>
