@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🔐 2026 聖誕交換禮物：任務揭曉 🎁</title>
+  <title>🔐 2026 聖誕交換禮物：魔女密碼任務揭曉 🎁</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -149,7 +149,6 @@
       font-weight: bold;
     }
 
-    /* 主辦人自動配對對照表 */
     .host-matrix-wrap {
       margin-top: 14px;
       background: #fff;
@@ -493,31 +492,29 @@
 
 <div class="container">
   <div class="header-box">
-    <h1>🔐 聖誕交換禮物：密碼揭曉 🎁</h1>
+    <h1>🔐 聖誕交換禮物：魔女密碼揭曉 🎁</h1>
     <div class="header-subtitle">MAGIC GIFT MISSION REVEAL</div>
   </div>
 
   <!-- 主辦人專用：僅在網址帶 ?host=2026 時顯示 -->
   <div class="rpg-panel" id="hostSyncPanel">
     <div class="panel-top">
-      <div class="step-badge">HOST ONLY. 表單狀態、密碼與配對表</div>
+      <div class="step-badge">HOST ONLY. 表單狀態、固定密碼與配對表</div>
       <div>
         <button class="small-btn" onclick="fetchSheetData()">🔄 重新同步</button>
-        <button class="small-btn" onclick="rerollAllPins()">🎲 重抽 6 組密碼</button>
       </div>
     </div>
 
     <div class="sync-status" id="syncStatus">⏳ 正在連線你的 Google 表單回覆...</div>
     <div class="roster-preview" id="rosterPreview"></div>
 
-    <!-- 自動算好的 6 人密碼、送禮對象與動詞來源對照表 -->
     <div class="host-matrix-wrap">
-      <div class="host-matrix-title">📋 6 人配對與動詞來源總表（僅主辦人可見）</div>
+      <div class="host-matrix-title">📋 6 人固定密碼、送禮對象與動詞來源總表（僅主辦人可見）</div>
       <table class="host-matrix-table">
         <thead>
           <tr>
             <th>角色 (A)</th>
-            <th>3位數密碼</th>
+            <th>固定密碼</th>
             <th>送禮對象 (B)</th>
             <th>魔女動詞來源</th>
             <th>抽到動詞</th>
@@ -604,54 +601,15 @@
     document.getElementById('hostSyncPanel').style.display = 'block';
   }
 
-  function generateNonConsecutivePins(count) {
-    const pins = [];
-    const used = new Set();
-    while (pins.length < count) {
-      const n = Math.floor(Math.random() * 900) + 100;
-      const s = String(n);
-      const d0 = Number(s[0]);
-      const d1 = Number(s[1]);
-      const d2 = Number(s[2]);
-      const noConsecutive =
-        Math.abs(d1 - d0) !== 1 &&
-        Math.abs(d2 - d1) !== 1 &&
-        d0 !== d1 &&
-        d1 !== d2;
-      if (noConsecutive && !used.has(s)) {
-        used.add(s);
-        pins.push(s);
-      }
-    }
-    return pins;
-  }
-
-  const PIN_STORAGE_KEY = 'xmas_2026_random_pins_v1';
-  let savedPins = JSON.parse(localStorage.getItem(PIN_STORAGE_KEY) || 'null');
-  if (!Array.isArray(savedPins) || savedPins.length !== 6) {
-    savedPins = generateNonConsecutivePins(6);
-    localStorage.setItem(PIN_STORAGE_KEY, JSON.stringify(savedPins));
-  }
-
+  // 六名角色的固定密碼（不連號、每次開啟網頁皆完全一致）
   const roster = [
-    { id: '1', name: 'Alice', pin: savedPins[0], img: 'alice.png',  adv1: '', adv2: '', verb: '' },
-    { id: '2', name: 'Kenzi', pin: savedPins[1], img: 'kenzi.png',  adv1: '', adv2: '', verb: '' },
-    { id: '3', name: 'Diane', pin: savedPins[2], img: 'diane.png',  adv1: '', adv2: '', verb: '' },
-    { id: '4', name: 'Mara',  pin: savedPins[3], img: 'mara.png',   adv1: '', adv2: '', verb: '' },
-    { id: '5', name: '涵涵',  pin: savedPins[4], img: 'hanhan.png', adv1: '', adv2: '', verb: '' },
-    { id: '6', name: '邦邦',  pin: savedPins[5], img: 'bang.png',   adv1: '', adv2: '', verb: '' }
+    { id: '1', name: 'Alice', pin: '472', img: 'alice.png',  adv1: '', adv2: '', verb: '' },
+    { id: '2', name: 'Kenzi', pin: '819', img: 'kenzi.png',  adv1: '', adv2: '', verb: '' },
+    { id: '3', name: 'Diane', pin: '356', img: 'diane.png',  adv1: '', adv2: '', verb: '' },
+    { id: '4', name: 'Mara',  pin: '924', img: 'mara.png',   adv1: '', adv2: '', verb: '' },
+    { id: '5', name: '涵涵',  pin: '618', img: 'hanhan.png', adv1: '', adv2: '', verb: '' },
+    { id: '6', name: '邦邦',  pin: '745', img: 'bang.png',   adv1: '', adv2: '', verb: '' }
   ];
-
-  function rerollAllPins() {
-    const freshPins = generateNonConsecutivePins(6);
-    localStorage.setItem(PIN_STORAGE_KEY, JSON.stringify(freshPins));
-    roster.forEach((p, idx) => {
-      p.pin = freshPins[idx];
-    });
-    document.getElementById('reveal-card-section').style.display = 'none';
-    renderRosterPreview();
-    renderHostMatrix();
-  }
 
   let selectedGiverIdx = null;
 
@@ -740,7 +698,7 @@
 
   function buildGlobalOneToOneMap(entries) {
     const n = entries.length;
-    const globalSeed = entries.map(e => `${e.name}:${e.pin}`).join('|') + '|2026-xmas-1to1';
+    const globalSeed = entries.map(e => `${e.name}:${e.pin}`).join('|') + '|2026-xmas-1to1-fixed';
     const rng = seededRandom(globalSeed);
 
     const receiversOrder = entries
@@ -770,7 +728,7 @@
 
   function buildGlobalVerbMap(entries, targetMap) {
     const n = entries.length;
-    const globalSeed = entries.map(e => `${e.name}:${e.pin}:${e.verb}`).join('|') + '|2026-xmas-verb-v4';
+    const globalSeed = entries.map(e => `${e.name}:${e.pin}:${e.verb}`).join('|') + '|2026-xmas-verb-fixed';
     const rng = seededRandom(globalSeed);
 
     const verbSourcesOrder = entries
@@ -880,16 +838,13 @@
     }
   }
 
-  function getDeterministicAssignment(giverIdx, pin, entries) {
+  function getDeterministicAssignment(giverIdx, entries) {
     const globalMap = buildGlobalOneToOneMap(entries);
     const targetIdx = globalMap[giverIdx];
 
     const verbSourceMap = buildGlobalVerbMap(entries, globalMap);
     const verbSrcIdx = verbSourceMap[giverIdx];
     const chosenVerb = entries[verbSrcIdx].verb;
-
-    const storageKey = `xmas_2026_1to1_witch_v4_${entries[giverIdx].name}_${pin}`;
-    localStorage.setItem(storageKey, JSON.stringify({ targetIdx, chosenVerb }));
 
     return {
       target: entries[targetIdx],
@@ -918,7 +873,7 @@
       verb: p.verb || '（尚未填寫動詞）'
     }));
 
-    const { target, chosenVerb } = getDeterministicAssignment(selectedGiverIdx, pinInput, entries);
+    const { target, chosenVerb } = getDeterministicAssignment(selectedGiverIdx, entries);
 
     document.getElementById('giverImg').src = giver.img;
     document.getElementById('giverNameDisplay').innerText = giver.name;
